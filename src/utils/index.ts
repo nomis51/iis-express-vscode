@@ -38,9 +38,17 @@ export function getAppDotnetVersion(projectName: string): string {
 	if (!json) return DEFAULT_TARGET_FRAMEWORK;
 	if (!json.Project) return DEFAULT_TARGET_FRAMEWORK;
 	if (!json.Project.PropertyGroup) return DEFAULT_TARGET_FRAMEWORK;
-	if (!json.Project.PropertyGroup.TargetFramework) return DEFAULT_TARGET_FRAMEWORK;
 
-	return json.Project.PropertyGroup.TargetFramework;
+	if (json.Project.PropertyGroup.length) {
+		for (const p of json.Project.PropertyGroup) {
+			if (p.TargetFramework) return p.TargetFramework;
+		}
+
+		return DEFAULT_TARGET_FRAMEWORK;
+	} else {
+		if (!json.Project.PropertyGroup.TargetFramework) return DEFAULT_TARGET_FRAMEWORK;
+		return json.Project.PropertyGroup.TargetFramework;
+	}
 }
 
 export function getBuildFolder(projectName: string, configuration: 'Debug' | 'Release'): string {
