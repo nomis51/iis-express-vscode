@@ -63,7 +63,7 @@ jobs:
 
       - name: print vsix path
         run: |
-          echo "VSIX Path: ${{ env.vsix_path }}"
+          echo "VSIX Path: ${{github.workspace}}/iis-express-vscode-${{steps.gitversion.outputs.semVer}}.vsix"
 
       - name: upload vsix as artifact
         uses: actions/upload-artifact@v1
