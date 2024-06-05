@@ -19,7 +19,7 @@ const BUILD_TASK = {
 const START_IIS_EXPRESS_TASK = {
 	label: "Start IIS Express",
 	type: "shell",
-	command: "${workspaceFolder}/.vscode/iis-express-vscode/start.ps1",
+	command: "${workspaceFolder}/.vscode/iis-express/start.ps1",
 	isBackground: true,
 	problemMatcher: {
 		pattern: {
@@ -42,7 +42,7 @@ const START_IIS_EXPRESS_TASK = {
 const STOP_IIS_EXPRESS_TASK = {
 	label: "Stop IIS Express",
 	type: "shell",
-	command: "${workspaceFolder}/.vscode/iis-express-vscode/stop.ps1",
+	command: "${workspaceFolder}/.vscode/iis-express/stop.ps1",
 	presentation: {
 		reveal: "silent",
 		clear: true,
