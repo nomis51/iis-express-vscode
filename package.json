@@ -4,6 +4,14 @@
   "description": "IIS Express integration for VSCode",
   "icon": "images/logo.png",
   "version": "1.0.0",
+  "author": {
+    "name": "nomis51"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nomis51/iis-express-vscode"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.89.0"
   },
