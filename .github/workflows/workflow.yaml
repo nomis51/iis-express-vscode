@@ -52,7 +52,7 @@ jobs:
             = /version => "${{ steps.gitversion.outputs.semVer }}"
       
       - name: compile and create vsix
-        run: yarn package
+        run: yarn vscode:prepublish
 
       - name: print vsix path
         run: |
