@@ -51,8 +51,11 @@ jobs:
           patch-syntax: |
             = /version => "${{ steps.gitversion.outputs.semVer }}"
       
-      - name: compile and create vsix
+      - name: compile
         run: yarn vscode:prepublish
+
+      - name: package
+        run: yarn package
 
       - name: print vsix path
         run: |
