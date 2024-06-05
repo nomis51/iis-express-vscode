@@ -30,7 +30,7 @@ export async function invoke(channel: OutputChannel) {
 
 		createApplicationHostConfig(project!);
 		channel.appendLine(`IIS Express config file created at .vscode/${EXTENSION_NAME}/applicationhost.config`);
-		createWebConfig(project);
+		await createWebConfig(project);
 		channel.appendLine(`IIS Express web.config file created at .vscode/${EXTENSION_NAME}/web.config`);
 
 		addStartIISExpressScript(project);

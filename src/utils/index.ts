@@ -113,3 +113,27 @@ export function getAppProjectsNames(): string[] {
 
 	return names;
 }
+
+export function getAvailableAspNetCoreEnvironments(projectName: string): string[] {
+	const projectPath = path.join(getAppFolder(), projectName);
+
+	const files = fs.readdirSync(projectPath, { withFileTypes: true });
+	const environments = [];
+
+	for (const file of files) {
+		if (!file.isFile()) continue;
+		if (!file.name.startsWith('appsettings')) continue;
+		if (!file.name.endsWith('.json')) continue;
+
+		const parts = file.name.split('.');
+		if (parts.length < 2) continue;
+
+		const env = parts.slice(1);
+		env.pop();
+		if (env.length === 0) continue;
+
+		environments.push(env.join('.'));
+	}
+
+	return environments;
+}
