@@ -1,4 +1,4 @@
-# ![logo](https://github.com/nomis51/iisexpress-vscode/blob/dev/images/logo-small.png?raw=true) IIS Express for VSCode
+# ![logo](https://github.com/nomis51/iisexpress-vscode/blob/master/images/logo-small.png?raw=true) IIS Express for VSCode
 
 
 Simple extension that let you easily integrate IIS Express into your ASP.NET projects with VSCode. 
