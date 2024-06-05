@@ -6,6 +6,7 @@ interface WebConfigOptions {
   appId: string;
   windowsAuthentication: boolean;
   anonymousAuthentication: boolean;
+  aspNetCoreEnvironment: string;
 }
 
 export function getTemplate(options: WebConfigOptions): string {
@@ -26,7 +27,11 @@ const WEB_CONFIG_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 	    <remove name="aspNetCore" />
         <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
       </handlers>
-      <aspNetCore processPath="dotnet" arguments="#{buildPath}\\#{appName}.dll" stdoutLogEnabled="true" stdoutLogFile="#{buildPath}\\.iis-express\\logs\\" hostingModel="inprocess" />
+      <aspNetCore processPath="dotnet" arguments="#{buildPath}\\#{appName}.dll" stdoutLogEnabled="true" stdoutLogFile="#{buildPath}\\.iis-express\\logs\\" hostingModel="inprocess">
+        <environmentVariables>
+          <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="#{aspNetCoreEnvironment}" />
+        </environmentVariables>
+      </aspNetCore>
     </system.webServer>
   </location>
 </configuration>
