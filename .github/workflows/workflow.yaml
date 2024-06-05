@@ -6,7 +6,8 @@ on:
       - master
     paths-ignore:
       - '.vscode/**'
-      - images/**
+      - 'images/**'
+      - 'README.md'
 
 jobs:
   cicd:
