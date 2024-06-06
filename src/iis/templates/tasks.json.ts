@@ -49,6 +49,21 @@ const STOP_IIS_EXPRESS_TASK = {
 		showReuseMessage: false
 	}
 };
+const DELAY_TASK = {
+	label: "Wait for IIS Express",
+	type: "shell",
+	command: "timeout #{timeout}",
+	presentation: {
+		reveal: "silent",
+		clear: true,
+		hide: true,
+		focus: false,
+		echo: false
+	},
+	dependson: [
+		"Start IIS Express"
+	]
+};
 
 const DEFAULT_TASKS_JSON_CONTENT = {
 	version: "2.0.0",
@@ -59,7 +74,11 @@ export function addBuildTasks() {
 	writeToTasksJson(BUILD_TASK);
 }
 
-export function addIISExpressTasks() {
+export function addIISExpressTasks(timeout: number = 1) {
+	writeToTasksJson({
+		...DELAY_TASK,
+		command: DELAY_TASK.command.replace("#{timeout}", timeout.toString())
+	});
 	writeToTasksJson(START_IIS_EXPRESS_TASK);
 	writeToTasksJson(STOP_IIS_EXPRESS_TASK);
 }

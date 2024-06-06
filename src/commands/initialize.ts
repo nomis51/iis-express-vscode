@@ -39,12 +39,21 @@ export async function invoke(channel: OutputChannel) {
 		channel.appendLine(`IIS Express stop script created at .vscode/${EXTENSION_NAME}/stop.ps1`);
 
 		addBuildTasks();
-		channel.appendLine("Build task added to tasks.json")
-		addIISExpressTasks();
-		channel.appendLine("IIS Express tasks added to tasks.json")
+		channel.appendLine("Build task added to tasks.json");
+
+		const timeoutStr = await vscode.window.showInputBox({
+			title: "Delay before attaching to process",
+			placeHolder: "Delay before attaching to process",
+			value: "1",
+		});
+
+		const timeout = parseInt(timeoutStr ?? "1");
+
+		addIISExpressTasks(isNaN(timeout) ? 1 : timeout);
+		channel.appendLine("IIS Express tasks added to tasks.json");
 
 		addLaunchConfig();
-		channel.appendLine("Launch config added to launch.json")
+		channel.appendLine("Launch config added to launch.json");
 
 		vscode.window.showInformationMessage(`IIS Express initialized for '${project}'`);
 	}
