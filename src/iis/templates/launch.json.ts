@@ -1,13 +1,13 @@
 import fs from 'fs';
-import { getLaunchJsonPath } from "../../utils";
 import json5 from 'json5';
+import { getLaunchJsonPath } from "../../utils";
 
 const ATTACH_PROCESS_LAUNCH_TASK = {
 	name: "Start IIS Express",
 	type: "coreclr",
 	request: "attach",
 	processName: "iisexpress.exe",
-	preLaunchTask: "Start IIS Express",
+	preLaunchTask: "Wait for IIS Express",
 	postDebugTask: "Stop IIS Express",
 };
 
