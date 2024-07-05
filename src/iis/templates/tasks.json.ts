@@ -56,11 +56,11 @@ const DELAY_TASK = {
 	presentation: {
 		reveal: "silent",
 		clear: true,
-		hide: true,
+		close: true,
 		focus: false,
 		echo: false
 	},
-	dependson: [
+	dependsOn: [
 		"Start IIS Express"
 	]
 };
