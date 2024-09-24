@@ -1,8 +1,8 @@
-import path from "path";
-import fs from "fs";
-import * as vscode from "vscode";
-import json5 from "json5";
 import { XMLParser } from "fast-xml-parser";
+import fs from "fs";
+import json5 from "json5";
+import path from "path";
+import * as vscode from "vscode";
 import { LaunchSettings } from "../interfaces/launchSettings";
 
 const DEFAULT_TARGET_FRAMEWORK = "net8.0";
@@ -27,11 +27,8 @@ export function getAppName(): string {
 	return path.basename(getAppFolder());
 }
 
-export function getAppDotnetVersion(projectName: string): string {
-	const csprojFilePath = getCsprojPath(projectName);
-	if (!csprojFilePath) return DEFAULT_TARGET_FRAMEWORK;
-
-	const content = fs.readFileSync(csprojFilePath, { encoding: "utf8" });
+export function getAppDotnetVersion(project: fs.Dirent): string {
+	const content = fs.readFileSync(path.join(project.parentPath, project.name), { encoding: "utf8" });
 
 	const parser = new XMLParser();
 	const json = parser.parse(content);
@@ -51,8 +48,8 @@ export function getAppDotnetVersion(projectName: string): string {
 	}
 }
 
-export function getBuildFolder(projectName: string, configuration: 'Debug' | 'Release'): string {
-	return path.join(getAppFolder(), projectName, 'bin', configuration, getAppDotnetVersion(projectName));
+export function getBuildFolder(project: fs.Dirent, configuration: 'Debug' | 'Release'): string {
+	return path.join(project.parentPath, 'bin', configuration, getAppDotnetVersion(project));
 }
 
 export function getExtensionFolder(): string {
@@ -75,8 +72,8 @@ export function getWebConfigPath(): string {
 	return path.join(getAppFolder(), VSCODE_FOLDER, EXTENSION_NAME, 'web.config');
 }
 
-export function getLaunchSettings(projectName: string): LaunchSettings | undefined {
-	const filePath = path.join(getAppFolder(), projectName, 'Properties', 'launchSettings.json');
+export function getLaunchSettings(project: fs.Dirent): LaunchSettings | undefined {
+	const filePath = path.join(project.parentPath, 'Properties', 'launchSettings.json');
 	if (!fs.existsSync(filePath)) return;
 
 	const content = fs.readFileSync(filePath, { encoding: 'utf8' });
@@ -85,39 +82,23 @@ export function getLaunchSettings(projectName: string): LaunchSettings | undefin
 	return json5.parse(content) as LaunchSettings;
 }
 
-export function getCsprojPath(projectName: string): string | undefined {
-	const projectPath = path.join(getAppFolder(), projectName);
+export function getAppProjects(): fs.Dirent[] {
+	const projects: fs.Dirent[] = [];
 
-	for (const file of fs.readdirSync(projectPath, { withFileTypes: true })) {
-		if (!file.isFile()) continue;
-		if (!file.name.endsWith('.csproj')) continue;
+	const entries = fs.readdirSync(getAppFolder(), { withFileTypes: true, recursive: true });
 
-		return path.join(projectPath, file.name);
-	}
-}
+	for (const entry of entries) {
+		if (entry.isDirectory()) continue;
+		if (!entry.name.endsWith(".csproj")) continue;
 
-export function getAppProjectsNames(): string[] {
-	const folders = fs.readdirSync(getAppFolder(), { withFileTypes: true });
-
-	const names = [];
-
-	for (const folder of folders) {
-		if (!folder.isDirectory()) continue;
-		if (folder.name.startsWith('.')) continue;
-
-		const files = fs.readdirSync(path.join(getAppFolder(), folder.name), { withFileTypes: true });
-		if (!files.find((f: any) => f.isFile() && f.name.endsWith('.csproj'))) continue;
-
-		names.push(folder.name);
+		projects.push(entry);
 	}
 
-	return names;
+	return projects;
 }
 
-export function getAvailableAspNetCoreEnvironments(projectName: string): string[] {
-	const projectPath = path.join(getAppFolder(), projectName);
-
-	const files = fs.readdirSync(projectPath, { withFileTypes: true });
+export function getAvailableAspNetCoreEnvironments(project: fs.Dirent): string[] {
+	const files = fs.readdirSync(project.parentPath, { withFileTypes: true });
 	const environments = [];
 
 	for (const file of files) {

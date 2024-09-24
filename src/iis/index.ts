@@ -1,18 +1,18 @@
+import fs from "fs";
 import path from "path";
+import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
+import { getAvailableAspNetCoreEnvironments, getBuildFolder, getExtensionFolder, getLaunchSettings } from '../utils';
 import { getTemplate as getApplicationhostConfigTemplate } from "./templates/applicationhost.config";
 import { getTemplate as getWebConfigTemplate } from './templates/web.config';
-import fs from "fs";
-import { getAvailableAspNetCoreEnvironments, getBuildFolder, getExtensionFolder, getLaunchSettings } from '../utils';
-import { v4 as uuid } from 'uuid';
 
-export function createApplicationHostConfig(projectName: string) {
-	const launchSettings = getLaunchSettings(projectName);
+export function createApplicationHostConfig(project: fs.Dirent) {
+	const launchSettings = getLaunchSettings(project);
 	const portParts = launchSettings?.iisSettings.iisExpress.applicationUrl.split(':') ?? [];
 
 	const template = getApplicationhostConfigTemplate({
-		appName: projectName,
-		appPath: getBuildFolder(projectName, "Debug"),
+		appName: project.name.split('.')[0],
+		appPath: getBuildFolder(project, "Debug"),
 		httpPort: launchSettings ? Number.parseInt(portParts[portParts.length - 1]) : 5000,
 		httpsPort: launchSettings?.iisSettings.iisExpress.sslPort ?? 44389,
 	});
@@ -20,10 +20,10 @@ export function createApplicationHostConfig(projectName: string) {
 	writeToConfigFolder('applicationhost.config', template);
 }
 
-export async function createWebConfig(projectName: string) {
-	const launchSettings = getLaunchSettings(projectName);
+export async function createWebConfig(project: fs.Dirent) {
+	const launchSettings = getLaunchSettings(project);
 
-	const environments = getAvailableAspNetCoreEnvironments(projectName);
+	const environments = getAvailableAspNetCoreEnvironments(project);
 	const env = await vscode.window.showQuickPick(environments, {
 		placeHolder: 'Select ASP.NET Core Environment',
 		canPickMany: false,
@@ -34,8 +34,8 @@ export async function createWebConfig(projectName: string) {
 	});
 
 	const template = getWebConfigTemplate({
-		appName: projectName,
-		buildPath: getBuildFolder(projectName, 'Debug'),
+		appName: project.name.split('.')[0],
+		buildPath: getBuildFolder(project, 'Debug'),
 		appId: uuid(),
 		windowsAuthentication: launchSettings?.iisSettings.windowsAuthentication ?? false,
 		anonymousAuthentication: launchSettings?.iisSettings.anonymousAuthentication ?? false,
