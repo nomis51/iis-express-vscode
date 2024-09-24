@@ -1,17 +1,17 @@
-import { OutputChannel } from "vscode";
 import * as vscode from 'vscode';
-import { EXTENSION_NAME, createExtensionFolder, getAppProjectsNames } from "../utils";
+import { OutputChannel } from "vscode";
 import { createApplicationHostConfig, createWebConfig } from "../iis";
-import { addBuildTasks, addIISExpressTasks } from "../iis/templates/tasks.json";
 import { addLaunchConfig } from "../iis/templates/launch.json";
 import { addStartIISExpressScript, addStopIISExpressScript } from "../iis/templates/scripts";
+import { addBuildTasks, addIISExpressTasks } from "../iis/templates/tasks.json";
+import { EXTENSION_NAME, createExtensionFolder, getAppProjects } from "../utils";
 
 export async function invoke(channel: OutputChannel) {
 	channel.show();
 
 	try {
-		const projects = getAppProjectsNames();
-		const project = await vscode.window.showQuickPick(projects, {
+		const projects = getAppProjects();
+		const projectName = await vscode.window.showQuickPick(projects.map(e => e.name), {
 			title: 'Starting project',
 			placeHolder: 'Select the starting project',
 			canPickMany: false,
@@ -19,16 +19,17 @@ export async function invoke(channel: OutputChannel) {
 			matchOnDescription: true,
 			matchOnDetail: true
 		});
-		if (!project) {
+		if (!projectName) {
 			vscode.window.showErrorMessage('No project selected');
 			channel.appendLine("Aborting initialization: No project selected");
 			return;
 		}
 
+		const project = projects.find(p => p.name === projectName)!;
 		createExtensionFolder();
 		channel.appendLine(`Extension folder created at .vscode/${EXTENSION_NAME}`);
 
-		createApplicationHostConfig(project!);
+		createApplicationHostConfig(project);
 		channel.appendLine(`IIS Express config file created at .vscode/${EXTENSION_NAME}/applicationhost.config`);
 		await createWebConfig(project);
 		channel.appendLine(`IIS Express web.config file created at .vscode/${EXTENSION_NAME}/web.config`);
@@ -55,7 +56,7 @@ export async function invoke(channel: OutputChannel) {
 		addLaunchConfig();
 		channel.appendLine("Launch config added to launch.json");
 
-		vscode.window.showInformationMessage(`IIS Express initialized for '${project}'`);
+		vscode.window.showInformationMessage(`IIS Express initialized for '${projectName}'`);
 	}
 	catch (e) {
 		channel.appendLine("Error: Failed to initialize IIS Express: " + e);

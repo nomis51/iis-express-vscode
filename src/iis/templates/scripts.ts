@@ -6,7 +6,7 @@ const STOP_IIS_EXPRESS_SCRIPT = 'Get-Process | Where-Object {$_.Path -Like "*iis
 
 const START_IIS_EXPRESS_SCRIPT = `cp "#{extensionFolder}\\web.config" "#{buildPath}\\web.config"
 
-& "C:\\Program Files\\IIS Express\\iisexpress.exe" /config:"#{configFilePath}" /site:"#{appName}" /apppool:"#{appName} AppPool" /trace:"warning"`
+& "C:\\Program Files\\IIS Express\\iisexpress.exe" /config:"#{configFilePath}" /site:"#{appName}" /apppool:"#{appName} AppPool" /trace:"warning"`;
 
 export function addStopIISExpressScript() {
 	fs.writeFileSync(
@@ -16,14 +16,14 @@ export function addStopIISExpressScript() {
 	);
 }
 
-export function addStartIISExpressScript(projectName: string) {
+export function addStartIISExpressScript(project: fs.Dirent) {
 	fs.writeFileSync(
 		path.join(getExtensionFolder(), 'start.ps1'),
 		START_IIS_EXPRESS_SCRIPT
 			.replace("#{extensionFolder}", getExtensionFolder())
-			.replace("#{buildPath}", getBuildFolder(projectName, 'Debug'))
+			.replace("#{buildPath}", getBuildFolder(project, 'Debug'))
 			.replace('#{configFilePath}', getApplicationHostConfigPath())
-			.replaceAll('#{appName}', projectName),
+			.replaceAll('#{appName}', project.name.split('.')[0]),
 		{ encoding: 'utf8' }
 	);
 }
