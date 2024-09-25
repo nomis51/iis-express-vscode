@@ -48,7 +48,7 @@ export function getAppDotnetVersion(project: fs.Dirent): string {
 	}
 }
 
-export function getBuildFolder(project: fs.Dirent, configuration: 'Debug' | 'Release'): string {
+export function getBuildFolder(project: fs.Dirent, configuration: string): string {
 	return path.join(project.parentPath, 'bin', configuration, getAppDotnetVersion(project));
 }
 

@@ -7,6 +7,7 @@ interface WebConfigOptions {
   windowsAuthentication: boolean;
   anonymousAuthentication: boolean;
   aspNetCoreEnvironment: string;
+  configuration: string;
 }
 
 export function getTemplate(options: WebConfigOptions): string {

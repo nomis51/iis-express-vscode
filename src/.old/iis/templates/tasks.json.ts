@@ -8,7 +8,7 @@ const BUILD_TASK = {
 	command: "dotnet",
 	args: [
 		"build",
-		"--configuration=Debug",
+		"--configuration=#{configuration}",
 	],
 	presentation: {
 		reveal: "always",
@@ -70,8 +70,10 @@ const DEFAULT_TASKS_JSON_CONTENT = {
 	tasks: []
 };
 
-export function addBuildTasks() {
-	writeToTasksJson(BUILD_TASK);
+export function addBuildTasks(configuration: string) {
+	const obj = JSON.parse(JSON.stringify(BUILD_TASK));
+	obj.args[1] = obj.args[1].replace("#{configuration}", configuration);
+	writeToTasksJson(obj);
 }
 
 export function addIISExpressTasks(timeout: number = 1) {

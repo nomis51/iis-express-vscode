@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { invoke as invokeInitialize } from './commands/initialize';
-import { invoke as invokeStop } from './commands/stop';
-import { EXTENSION_NAME } from './utils';
+import { invokeInitialize, invokeStop } from "./commands";
+import { EXTENSION_NAME } from './constants';
 
 let channel!: vscode.OutputChannel;
 

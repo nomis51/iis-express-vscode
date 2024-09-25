@@ -16,12 +16,12 @@ export function addStopIISExpressScript() {
 	);
 }
 
-export function addStartIISExpressScript(project: fs.Dirent) {
+export function addStartIISExpressScript(project: fs.Dirent, configuration: string) {
 	fs.writeFileSync(
-		path.join(getExtensionFolder(), 'start.ps1'),
+		path.join(getExtensionFolder(), configuration, 'start.ps1'),
 		START_IIS_EXPRESS_SCRIPT
 			.replace("#{extensionFolder}", getExtensionFolder())
-			.replace("#{buildPath}", getBuildFolder(project, 'Debug'))
+			.replace("#{buildPath}", getBuildFolder(project, configuration))
 			.replace('#{configFilePath}', getApplicationHostConfigPath())
 			.replaceAll('#{appName}', project.name.split('.')[0]),
 		{ encoding: 'utf8' }

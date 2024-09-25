@@ -7,6 +7,7 @@ interface ApplicationHostConfigOptions {
   appPath: string;
   httpPort: number;
   httpsPort: number;
+  configuration: string;
 }
 
 export function getTemplate(options: ApplicationHostConfigOptions): string {
