@@ -99,7 +99,7 @@ export function getAppProjects(): fs.Dirent[] {
 
 export function getAvailableAspNetCoreEnvironments(project: fs.Dirent): string[] {
 	const files = fs.readdirSync(project.parentPath, { withFileTypes: true });
-	const environments = [];
+	const environments: string[] = [];
 
 	for (const file of files) {
 		if (!file.isFile()) continue;

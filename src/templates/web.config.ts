@@ -1,7 +1,7 @@
 import path from "path";
 import { v4 as uuid } from 'uuid';
 import { LaunchSettings, Project } from "../interfaces";
-import { getBuildFolder, replaceTemplateTokens, writeToFile } from "../utils";
+import { getBuildFolder, getExtensionFolder, replaceTemplateTokens, writeToFile } from "../utils";
 
 interface Options {
 	appName: string;
@@ -25,7 +25,7 @@ export function create(project: Project, launchSettings: LaunchSettings, configu
 	};
 
 	const data = replaceTemplateTokens(TEMPLATE, options as any);
-	const filePath = path.join("extension folder", options.configuration, "web.config");
+	const filePath = path.join(getExtensionFolder(), options.configuration, "web.config");
 
 	writeToFile(filePath, data);
 }

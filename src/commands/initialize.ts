@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_FOLDER_NAME, EXTENSION_NAME } from "../constants";
+import { create as createApplicationHostConfig } from "../templates/applicationhost.config";
 import { create as createWebConfig } from "../templates/web.config";
 import { askAspNetCoreEnvironment, createExtensionFolder, getDotnetVersion, getLaunchSettings, getProjectsPaths as getProjects } from "../utils";
 
@@ -34,15 +35,16 @@ export async function invoke(channel: vscode.OutputChannel) {
 		project.env = await askAspNetCoreEnvironment(project);
 
 		createExtensionFolder();
-		channel.appendLine(`Extension folder created at .vscode/${EXTENSION_NAME}`);
+		channel.appendLine(`Extension folder created at .vscode/${EXTENSION_FOLDER_NAME}`);
 
 		for (const configuration of ["Debug", "Release"]) {
 			channel.appendLine(`Creating IIS Express config for '${configuration}'...`);
 
 			createWebConfig(project, launchSettings, configuration);
+			createApplicationHostConfig(project, launchSettings, configuration);
 		}
 
-		vscode.window.showInformationMessage(`${EXTENSION_NAME} initialized for '${projectName}'`);
+		vscode.window.showInformationMessage(`IIS Express initialized for '${projectName}'`);
 	}
 	catch (e) {
 		channel.appendLine(`Error: Failed to initialize ${EXTENSION_NAME}: ` + e);

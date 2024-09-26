@@ -4,7 +4,7 @@ import fs from "fs";
 import json5 from "json5";
 import path from "path";
 import * as vscode from 'vscode';
-import { EXTENSION_NAME } from "./constants";
+import { EXTENSION_FOLDER_NAME } from "./constants";
 import { LaunchSettings, Project } from "./interfaces";
 
 const TOKEN_TEMPLATE = "#{$0}";
@@ -32,7 +32,7 @@ export function getExtensionFolder(): string {
 	return path.join(
 		getWorkspaceFolder(),
 		VSCODE_FOLDER,
-		EXTENSION_NAME
+		EXTENSION_FOLDER_NAME
 	);
 }
 
