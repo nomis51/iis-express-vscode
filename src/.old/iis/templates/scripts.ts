@@ -23,7 +23,7 @@ export function addStartIISExpressScript(project: fs.Dirent, configuration: stri
 			.replace("#{extensionFolder}", getExtensionFolder())
 			.replace("#{buildPath}", getBuildFolder(project, configuration))
 			.replace('#{configFilePath}', getApplicationHostConfigPath())
-			.replaceAll('#{appName}', project.name.split('.')[0]),
+			.replace('#{appName}', project.name.split('.')[0]),
 		{ encoding: 'utf8' }
 	);
 }

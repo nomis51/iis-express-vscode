@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { EXTENSION_FOLDER_NAME, EXTENSION_NAME } from "../constants";
 import { create as createApplicationHostConfig } from "../templates/applicationhost.config";
+import { create as createStartScript } from "../templates/start.ps1";
+import { create as createStopScript } from '../templates/stop.ps1';
 import { create as createWebConfig } from "../templates/web.config";
 import { askAspNetCoreEnvironment, createExtensionFolder, getDotnetVersion, getLaunchSettings, getProjectsPaths as getProjects } from "../utils";
 
@@ -42,6 +44,8 @@ export async function invoke(channel: vscode.OutputChannel) {
 
 			createWebConfig(project, launchSettings, configuration);
 			createApplicationHostConfig(project, launchSettings, configuration);
+			createStartScript(project, configuration);
+			createStopScript(configuration);
 		}
 
 		vscode.window.showInformationMessage(`IIS Express initialized for '${projectName}'`);
