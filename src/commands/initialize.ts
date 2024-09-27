@@ -1,16 +1,18 @@
-import * as vscode from 'vscode';
-import { OutputChannel } from "vscode";
-import { createApplicationHostConfig, createWebConfig } from "../iis";
-import { addLaunchConfig } from "../iis/templates/launch.json";
-import { addStartIISExpressScript, addStopIISExpressScript } from "../iis/templates/scripts";
-import { addBuildTasks, addIISExpressTasks } from "../iis/templates/tasks.json";
-import { EXTENSION_NAME, createExtensionFolder, getAppProjects } from "../utils";
+import * as vscode from "vscode";
+import { EXTENSION_FOLDER_NAME, EXTENSION_NAME, VSCODE_FOLDER } from "../constants";
+import { create as createApplicationHostConfig } from "../templates/applicationhost.config";
+import { create as createLaunchJson } from "../templates/launch.json";
+import { create as createStartScript } from "../templates/start.ps1";
+import { create as createStopScript } from '../templates/stop.ps1';
+import { createBuildTasks, createIISTasks } from "../templates/tasks.json";
+import { create as createWebConfig } from "../templates/web.config";
+import { askAspNetCoreEnvironment, createExtensionFolder, getDotnetVersion, getLaunchSettings, getProjectsPaths as getProjects } from "../utils";
 
-export async function invoke(channel: OutputChannel) {
+export async function invoke(channel: vscode.OutputChannel) {
 	channel.show();
 
 	try {
-		const projects = getAppProjects();
+		const projects = getProjects();
 		const projectName = await vscode.window.showQuickPick(projects.map(e => e.name), {
 			title: 'Starting project',
 			placeHolder: 'Select the starting project',
@@ -26,21 +28,15 @@ export async function invoke(channel: OutputChannel) {
 		}
 
 		const project = projects.find(p => p.name === projectName)!;
-		createExtensionFolder();
-		channel.appendLine(`Extension folder created at .vscode/${EXTENSION_NAME}`);
+		const launchSettings = getLaunchSettings(project.path);
+		if (!launchSettings) {
+			vscode.window.showErrorMessage('No launch settings found');
+			channel.appendLine("Aborting initialization: No launch settings found");
+			return;
+		}
 
-		createApplicationHostConfig(project);
-		channel.appendLine(`IIS Express config file created at .vscode/${EXTENSION_NAME}/applicationhost.config`);
-		await createWebConfig(project);
-		channel.appendLine(`IIS Express web.config file created at .vscode/${EXTENSION_NAME}/web.config`);
-
-		addStartIISExpressScript(project);
-		channel.appendLine(`IIS Express start script created at .vscode/${EXTENSION_NAME}/start.ps1`);
-		addStopIISExpressScript();
-		channel.appendLine(`IIS Express stop script created at .vscode/${EXTENSION_NAME}/stop.ps1`);
-
-		addBuildTasks();
-		channel.appendLine("Build task added to tasks.json");
+		project.framework = getDotnetVersion(project);
+		project.env = await askAspNetCoreEnvironment(project);
 
 		const timeoutStr = await vscode.window.showInputBox({
 			title: "Delay before attaching to process",
@@ -50,15 +46,35 @@ export async function invoke(channel: OutputChannel) {
 
 		const timeout = parseInt(timeoutStr ?? "1");
 
-		addIISExpressTasks(isNaN(timeout) ? 1 : timeout);
-		channel.appendLine("IIS Express tasks added to tasks.json");
+		createExtensionFolder();
+		channel.appendLine(`Extension folder created at ${VSCODE_FOLDER}/${EXTENSION_FOLDER_NAME}`);
 
-		addLaunchConfig();
-		channel.appendLine("Launch config added to launch.json");
+		for (const configuration of ["Debug", "Release"]) {
+			channel.appendLine(`Creating config for '${configuration}'...`);
+
+			createWebConfig(project, launchSettings, configuration);
+			channel.appendLine(`web.config file created at ${VSCODE_FOLDER}/${EXTENSION_FOLDER_NAME}/${configuration}/web.config`);
+
+			createApplicationHostConfig(project, launchSettings, configuration);
+			channel.appendLine(`applicationhost.config file created at .vscode/${EXTENSION_FOLDER_NAME}/${configuration}/applicationhost.config`);
+
+			createStartScript(project, configuration);
+			createStopScript(configuration);
+			channel.appendLine(`Scripts created at ${VSCODE_FOLDER}/${EXTENSION_FOLDER_NAME}/${configuration}/`);
+
+			createBuildTasks(configuration);
+			channel.appendLine("Build task added to tasks.json");
+
+			createIISTasks(isNaN(timeout) || timeout < 1 ? 1 : timeout, configuration);
+			channel.appendLine("Tasks added to tasks.json");
+
+			createLaunchJson(configuration);
+			channel.appendLine("Configs added to launch.json");
+		}
 
 		vscode.window.showInformationMessage(`IIS Express initialized for '${projectName}'`);
 	}
 	catch (e) {
-		channel.appendLine("Error: Failed to initialize IIS Express: " + e);
+		channel.appendLine(`Error: Failed to initialize ${EXTENSION_NAME}: ` + e);
 	}
 }
