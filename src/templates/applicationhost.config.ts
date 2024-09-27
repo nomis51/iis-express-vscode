@@ -1,21 +1,32 @@
-import path from "path";
-import { replaceTemplateTokens } from ".";
-import { getExtensionFolder } from "../../utils";
+import path from 'path';
+import { LaunchSettings, Project } from "../interfaces";
+import { getBuildFolder, getExtensionFolder, replaceTemplateTokens, writeToFile } from "../utils";
 
-interface ApplicationHostConfigOptions {
-  appName: string;
-  appPath: string;
-  httpPort: number;
-  httpsPort: number;
+interface Options {
+	appName: string;
+	appPath: string;
+	httpPort: number;
+	httpsPort: number;
+	configuration: string;
 }
 
-export function getTemplate(options: ApplicationHostConfigOptions): string {
-  return replaceTemplateTokens(APPLICATIONHOST_CONFIG_TEMPLATE, options as any);
+export function create(project: Project, launchSettings: LaunchSettings, configuration: string) {
+	const portParts = launchSettings.iisSettings.iisExpress.applicationUrl.split(':');
+	const options: Options = {
+		appName: project.name,
+		appPath: getBuildFolder(project, configuration),
+		httpPort: portParts.length < 2 ? 5000 : Number.parseInt(portParts[portParts.length - 1]),
+		httpsPort: launchSettings.iisSettings.iisExpress.sslPort ?? 44389,
+		configuration,
+	};
+
+	const data = replaceTemplateTokens(TEMPLATE, options as any);
+	const filePath = path.join(getExtensionFolder(), options.configuration, "applicationhost.config");
+
+	writeToFile(filePath, data);
 }
 
-export const APPLICATIONHOST_CONFIG_FILEPATH = path.join(getExtensionFolder(), 'applicationhost.config');
-
-const APPLICATIONHOST_CONFIG_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
+const TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     IIS configuration sections.
@@ -1009,5 +1020,4 @@ const APPLICATIONHOST_CONFIG_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
       </httpCompression>
     </system.webServer>
   </location>
-</configuration>
-`
+</configuration>`;
