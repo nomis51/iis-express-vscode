@@ -15,6 +15,8 @@ This extension uses VSCode `tasks`, `launch` configurations, generated scripts a
 - IIS Express output available in the terminal
 - IIS Express stdout logs available in the build folder (e.g. `bin/Debug/net8.0/.iis-express/logs`)
 - Closes IIS Express when you stop debugging (and the debugger also stops when you close IIS Express)
+- Can start in `Debug` or `Release` configuration (using predefined tasks)
+- You can edit every configuration and script as you wish
 
 ## Requirements
 - IIS Express (usually comes with Visual Studio Web Developpement installation module)
@@ -26,7 +28,8 @@ This extension uses VSCode `tasks`, `launch` configurations, generated scripts a
 - Type `IIS Express`
 - Select the `IIS Express: Initialize` command
 - Select the `Starting project`
-- Press `F5`
+- Follow the simple instructions
+- Press `F5` to start the application
 
 ## Commands
 - `IIS Express: Initialize` : Setup the current solution to be able to boot a project with IIS Express
