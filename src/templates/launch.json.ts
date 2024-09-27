@@ -1,25 +1,13 @@
 import fs from 'fs';
 import json5 from 'json5';
-import { getLaunchJsonPath } from "../../utils";
+import { getLaunchJsonPath } from '../utils';
 
-const ATTACH_PROCESS_LAUNCH_TASK = {
-	name: "Start IIS Express",
-	type: "coreclr",
-	request: "attach",
-	processName: "iisexpress.exe",
-	preLaunchTask: "Wait for IIS Express",
-	postDebugTask: "Stop IIS Express",
-};
-
-const DEFAULT_LAUNCH_JSON_CONTENT = {
-	version: "0.2.0",
-	configurations: []
-};
-
-export function addLaunchConfig(configuration: string) {
+export function create(configuration: string) {
 	writeToLaunchJson({
 		...ATTACH_PROCESS_LAUNCH_TASK,
 		name: ATTACH_PROCESS_LAUNCH_TASK.name + ` ${configuration}`,
+		preLaunchTask: ATTACH_PROCESS_LAUNCH_TASK.preLaunchTask + ` ${configuration}`,
+		postDebugTask: ATTACH_PROCESS_LAUNCH_TASK.postDebugTask + ` ${configuration}`,
 	});
 }
 
@@ -41,3 +29,17 @@ function writeToLaunchJson(config: any) {
 	}
 	fs.writeFileSync(launchJsonPath, JSON.stringify(json, null, 2), { encoding: "utf8" });
 }
+
+const ATTACH_PROCESS_LAUNCH_TASK = {
+	name: "Start IIS Express",
+	type: "coreclr",
+	request: "attach",
+	processName: "iisexpress.exe",
+	preLaunchTask: "Wait for IIS Express",
+	postDebugTask: "Stop IIS Express",
+};
+
+const DEFAULT_LAUNCH_JSON_CONTENT = {
+	version: "0.2.0",
+	configurations: []
+};

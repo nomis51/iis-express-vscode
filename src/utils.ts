@@ -4,12 +4,10 @@ import fs from "fs";
 import json5 from "json5";
 import path from "path";
 import * as vscode from 'vscode';
-import { EXTENSION_FOLDER_NAME } from "./constants";
+import { DEFAULT_TARGET_FRAMEWORK, EXTENSION_FOLDER_NAME, VSCODE_FOLDER } from "./constants";
 import { LaunchSettings, Project } from "./interfaces";
 
 const TOKEN_TEMPLATE = "#{$0}";
-const VSCODE_FOLDER = ".vscode";
-const DEFAULT_TARGET_FRAMEWORK = "net8.0";
 
 export function replaceTemplateToken(template: string, token: string, value: string) {
 	return template.replaceAll(TOKEN_TEMPLATE.replace("$0", token), value);
@@ -133,4 +131,12 @@ export async function askAspNetCoreEnvironment(project: Project): Promise<string
 		matchOnDetail: true,
 		title: 'ASP.NET Core Environment'
 	})) ?? "Development";
+}
+
+export function getTasksJsonPath(): string {
+	return path.join(getWorkspaceFolder(), VSCODE_FOLDER, 'tasks.json');
+}
+
+export function getLaunchJsonPath(): string {
+	return path.join(getWorkspaceFolder(), VSCODE_FOLDER, 'launch.json');
 }
