@@ -5,9 +5,9 @@ import { getLaunchJsonPath } from '../utils';
 export function create(configuration: string) {
 	writeToLaunchJson({
 		...ATTACH_PROCESS_LAUNCH_TASK,
-		name: ATTACH_PROCESS_LAUNCH_TASK.name + ` ${configuration}`,
-		preLaunchTask: ATTACH_PROCESS_LAUNCH_TASK.preLaunchTask + ` ${configuration}`,
-		postDebugTask: ATTACH_PROCESS_LAUNCH_TASK.postDebugTask + ` ${configuration}`,
+		name: ATTACH_PROCESS_LAUNCH_TASK.name + ` - ${configuration}`,
+		preLaunchTask: ATTACH_PROCESS_LAUNCH_TASK.preLaunchTask + ` - ${configuration}`,
+		postDebugTask: ATTACH_PROCESS_LAUNCH_TASK.postDebugTask + ` - ${configuration}`,
 	});
 }
 
