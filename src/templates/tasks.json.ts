@@ -7,7 +7,7 @@ import { getTasksJsonPath } from '../utils';
 export function createBuildTasks(configuration: string) {
 	writeToTasksJson({
 		...BUILD_TASK,
-		label: BUILD_TASK.label + ` ${configuration}`,
+		label: BUILD_TASK.label + ` - ${configuration}`,
 		args: [
 			BUILD_TASK.args[0],
 			BUILD_TASK.args[1].replace("#{configuration}", configuration),
@@ -18,24 +18,24 @@ export function createBuildTasks(configuration: string) {
 export function createIISTasks(timeout: number, configuration: string) {
 	writeToTasksJson({
 		...DELAY_TASK,
-		label: DELAY_TASK.label + ` ${configuration}`,
+		label: DELAY_TASK.label + ` - ${configuration}`,
 		command: DELAY_TASK.command.replace("#{timeout}", timeout.toString()),
 		dependsOn: [
-			DELAY_TASK.dependsOn[0] + ` ${configuration}`
+			DELAY_TASK.dependsOn[0] + ` - ${configuration}`
 		]
 	});
 
 	writeToTasksJson({
 		...START_IIS_EXPRESS_TASK,
-		label: START_IIS_EXPRESS_TASK.label + ` ${configuration}`,
+		label: START_IIS_EXPRESS_TASK.label + ` - ${configuration}`,
 		command: START_IIS_EXPRESS_TASK.command.replace("#{configuration}", configuration),
 		dependsOn: [
-			START_IIS_EXPRESS_TASK.dependsOn[0] + ` ${configuration}`
+			START_IIS_EXPRESS_TASK.dependsOn[0] + ` - ${configuration}`
 		]
 	});
 	writeToTasksJson({
 		...STOP_IIS_EXPRESS_TASK,
-		label: STOP_IIS_EXPRESS_TASK.label + ` ${configuration}`,
+		label: STOP_IIS_EXPRESS_TASK.label + ` - ${configuration}`,
 		command: STOP_IIS_EXPRESS_TASK.command.replace("#{configuration}", configuration),
 	});
 }
