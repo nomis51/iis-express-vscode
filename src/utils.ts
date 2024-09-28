@@ -42,8 +42,9 @@ export function getProjectsPaths(): Project[] {
 		if (entry.isDirectory()) continue;
 		if (!entry.name.endsWith(".csproj")) continue;
 
+		const nameParts = entry.name.split('.');
 		projects.push({
-			name: entry.name.split('.')[0],
+			name: nameParts.slice(0, -1).join('.'),
 			path: entry.parentPath,
 			csprojFilePath: path.join(entry.parentPath, entry.name),
 			framework: "",
